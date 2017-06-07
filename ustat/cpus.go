@@ -41,7 +41,20 @@ func (reader *CpusStatReader) Read() []uint64 {
 	return diff
 }
 
-var cpuStatTypes = map[string]string{
+var cpuStatTypes = []string{
+	"usr",
+	"nice",
+	"system",
+	"idle",
+	"iowait",
+	"irq",
+	"softirq",
+	"steal",
+	"guest",
+	"guestnice",
+}
+
+var cpuStatDescriptions = map[string]string{
 	"usr":       "User",
 	"nice":      "Nice",
 	"system":    "System",
@@ -57,7 +70,7 @@ var cpuStatTypes = map[string]string{
 func parseCpuStatNames(stat *procfs.Stat) []string {
 	names := make([]string, 0)
 	for _, cpuStat := range stat.CPUStats {
-		for cpuStatType, _ := range cpuStatTypes {
+		for _, cpuStatType := range cpuStatTypes {
 			name := fmt.Sprintf("%s.%s", cpuStat.Id, cpuStatType)
 			names = append(names, name)
 		}
@@ -68,7 +81,8 @@ func parseCpuStatNames(stat *procfs.Stat) []string {
 func parseCpuStatDescriptions(stat *procfs.Stat) []string {
 	descriptions := make([]string, 0)
 	for _, cpuStat := range stat.CPUStats {
-		for cpuStatType, cpuStatDescription := range cpuStatTypes {
+		for _, cpuStatType := range cpuStatTypes {
+			cpuStatDescription := cpuStatDescriptions[cpuStatType]
 			description := fmt.Sprintf("%s.%s = %s %s", cpuStat.Id, cpuStatType, cpuStat.Id, cpuStatDescription)
 			descriptions = append(descriptions, description)
 		}
