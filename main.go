@@ -22,6 +22,10 @@ func main() {
 			Name:  "i,int",
 			Usage: "Enable interrupt stats collection",
 		},
+		cli.BoolFlag{
+			Name:  "n,net",
+			Usage: "Enable network stats collection",
+		},
 		cli.StringFlag{
 			Name:  "p,pattern",
 			Usage: "Regular expression patter for filtering stats",
@@ -34,6 +38,9 @@ func main() {
 		}
 		if ctx.Bool("int") {
 			stats = append(stats, ustat.NewInterruptsStat())
+		}
+		if ctx.Bool("net") {
+			stats = append(stats, ustat.NewNetStat())
 		}
 		pattern := ctx.String("pattern")
 		if len(stats) == 0 {
