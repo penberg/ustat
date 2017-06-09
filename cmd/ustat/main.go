@@ -89,15 +89,19 @@ func main() {
 				fmt.Fprintf(output, "# %s\n", description)
 			}
 		}
-		for _, stat := range stats {
-			for _, name := range stat.Names {
+		for statIdx, stat := range stats {
+			for nameIdx, name := range stat.Names {
 				if pattern != "" {
 					matched, err := regexp.MatchString(pattern, name)
 					if err != nil || !matched {
 						continue
 					}
 				}
-				fmt.Fprintf(output, "%s%s", name, delimiter)
+				if statIdx+nameIdx == 0 {
+					fmt.Fprintf(output, "%s", name)
+				} else {
+					fmt.Fprintf(output, "%s%s", delimiter, name)
+				}
 			}
 		}
 		fmt.Fprintln(output, "")
@@ -113,16 +117,20 @@ func main() {
 		ticker := time.NewTicker(time.Second * 1)
 		go func() {
 			for _ = range ticker.C {
-				for _, stat := range stats {
+				for statIdx, stat := range stats {
 					values := stat.Collector.Collect()
-					for idx, value := range values {
+					for valueIdx, value := range values {
 						if pattern != "" {
-							matched, err := regexp.MatchString(pattern, stat.Names[idx])
+							matched, err := regexp.MatchString(pattern, stat.Names[valueIdx])
 							if err != nil || !matched {
 								continue
 							}
 						}
-						fmt.Fprintf(output, "%d%s", value, delimiter)
+						if statIdx+valueIdx == 0 {
+							fmt.Fprintf(output, "%d", value)
+						} else {
+							fmt.Fprintf(output, "%s%d", delimiter, value)
+						}
 					}
 				}
 				fmt.Fprintln(output, "")
