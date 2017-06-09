@@ -31,7 +31,7 @@ func main() {
 			Usage: "Enable disk stats collection",
 		},
 		cli.StringFlag{
-			Name:  "p,pattern",
+			Name:  "grep",
 			Usage: "Regular expression patter for filtering stats",
 		},
 	}
@@ -49,7 +49,7 @@ func main() {
 		if ctx.Bool("disk") {
 			stats = append(stats, ustat.NewDiskStat())
 		}
-		pattern := ctx.String("pattern")
+		pattern := ctx.String("grep")
 		if len(stats) == 0 {
 			return cli.NewExitError("No stats enabled", 1)
 		}
