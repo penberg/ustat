@@ -26,6 +26,10 @@ func main() {
 			Name:  "n,net",
 			Usage: "Enable network stats collection",
 		},
+		cli.BoolFlag{
+			Name:  "d,disk",
+			Usage: "Enable disk stats collection",
+		},
 		cli.StringFlag{
 			Name:  "p,pattern",
 			Usage: "Regular expression patter for filtering stats",
@@ -41,6 +45,9 @@ func main() {
 		}
 		if ctx.Bool("net") {
 			stats = append(stats, ustat.NewNetStat())
+		}
+		if ctx.Bool("disk") {
+			stats = append(stats, ustat.NewDiskStat())
 		}
 		pattern := ctx.String("pattern")
 		if len(stats) == 0 {
