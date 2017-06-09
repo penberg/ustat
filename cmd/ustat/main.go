@@ -19,32 +19,32 @@ func main() {
 	app.Flags = []cli.Flag{
 		cli.BoolFlag{
 			Name:  "c,cpu",
-			Usage: "Enable CPU stats collection",
+			Usage: "enable CPU stats collection",
 		},
 		cli.BoolFlag{
 			Name:  "i,int",
-			Usage: "Enable interrupt stats collection",
+			Usage: "enable interrupt stats collection",
 		},
 		cli.BoolFlag{
 			Name:  "n,net",
-			Usage: "Enable network stats collection",
+			Usage: "enable network stats collection",
 		},
 		cli.BoolFlag{
 			Name:  "d,disk",
-			Usage: "Enable disk stats collection",
+			Usage: "enable disk stats collection",
 		},
 		cli.StringFlag{
 			Name:  "o,output",
-			Usage: "Write output to `FILE`",
+			Usage: "write output to `FILE`",
 		},
 		cli.StringFlag{
 			Name:  "delimiter",
-			Usage: "Delimiter used in the output file",
+			Usage: "delimiter used in the output file",
 			Value: "\t",
 		},
 		cli.StringFlag{
 			Name:  "grep",
-			Usage: "Filter stats using an regular expression `PATTERN`",
+			Usage: "filter stats using an regular expression `PATTERN`",
 		},
 		cli.HelpFlag,
 	}
