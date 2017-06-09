@@ -72,6 +72,7 @@ func parseCpuStatNames(stat *procfs.Stat) []string {
 			names = append(names, name)
 		}
 	}
+	names = append(names, "ctxt.switch")
 	return names
 }
 
@@ -84,6 +85,7 @@ func parseCpuStatDescriptions(stat *procfs.Stat) []string {
 			descriptions = append(descriptions, description)
 		}
 	}
+	descriptions = append(descriptions, "ctx.switch = Number of context switches")
 	return descriptions
 }
 
@@ -101,5 +103,6 @@ func parseCpuStats(stat *procfs.Stat) []uint64 {
 		values = append(values, cpuStat.Guest)
 		values = append(values, cpuStat.GuestNice)
 	}
+	values = append(values, stat.ContextSwitches)
 	return values
 }
