@@ -34,7 +34,7 @@ func main() {
 		},
 		cli.StringFlag{
 			Name:  "o,output",
-			Usage: "Write output to a file",
+			Usage: "Write output to `FILE`",
 		},
 		cli.StringFlag{
 			Name:  "delimiter",
@@ -43,7 +43,7 @@ func main() {
 		},
 		cli.StringFlag{
 			Name:  "grep",
-			Usage: "Regular expression patter for filtering stats",
+			Usage: "Filter stats using an regular expression `PATTERN`",
 		},
 	}
 	app.Action = func(ctx *cli.Context) error {
