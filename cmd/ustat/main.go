@@ -15,6 +15,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "ustat"
 	app.Usage = "Unified system statistics collector"
+	app.HideHelp = true
 	app.Flags = []cli.Flag{
 		cli.BoolFlag{
 			Name:  "c,cpu",
@@ -45,9 +46,14 @@ func main() {
 			Name:  "grep",
 			Usage: "Filter stats using an regular expression `PATTERN`",
 		},
+		cli.HelpFlag,
 	}
 	app.Action = func(ctx *cli.Context) error {
 		var stats []*ustat.Stat
+		if ctx.Bool("help") {
+			cli.ShowAppHelp(ctx)
+			return nil
+		}
 		if ctx.Bool("cpu") {
 			stats = append(stats, ustat.NewCPUsStat())
 		}
