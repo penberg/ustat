@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/penberg/ustat/ustat"
+	"github.com/penberg/ustat"
 	"gopkg.in/urfave/cli.v1"
 	"os"
 	"regexp"
