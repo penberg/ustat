@@ -32,10 +32,7 @@ func (reader *InterruptsStatReader) Read() []uint64 {
 		panic(err)
 	}
 	counts := parseInterruptCounts(interrupts)
-	diff := make([]uint64, 0)
-	for idx := range reader.counts {
-		diff = append(diff, counts[idx]-reader.counts[idx])
-	}
+	diff := Difference(reader.counts, counts)
 	reader.counts = counts
 	return diff
 }

@@ -32,10 +32,7 @@ func (reader *NetStatReader) Read() []uint64 {
 		panic(err)
 	}
 	values := parseNetStats(stats)
-	diff := make([]uint64, 0)
-	for idx := range reader.values {
-		diff = append(diff, values[idx]-reader.values[idx])
-	}
+	diff := Difference(reader.values, values)
 	reader.values = values
 	return diff
 }
