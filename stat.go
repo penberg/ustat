@@ -1,11 +1,13 @@
 package ustat
 
+// A Stat is a collection of named stats.
 type Stat struct {
 	Names        []string
 	Descriptions []string
 	Reader       StatReader
 }
 
+// A StatReader is an interface for reading a collection of stats.
 type StatReader interface {
 	Read() []uint64
 }

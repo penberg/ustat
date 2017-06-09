@@ -5,12 +5,13 @@ import (
 	procfs "github.com/c9s/goprocinfo/linux"
 )
 
-type InterruptsStatReader struct {
+type interruptsStatReader struct {
 	counts []uint64
 }
 
 const procInterruptsPath = "/proc/interrupts"
 
+// NewInterruptsStat returns a new Stat, which collects interrupt stats from /proc/interrupts.
 func NewInterruptsStat() *Stat {
 	interrupts, err := procfs.ReadInterrupts(procInterruptsPath)
 	if err != nil {
@@ -22,11 +23,11 @@ func NewInterruptsStat() *Stat {
 	return &Stat{
 		Names:        names,
 		Descriptions: descriptions,
-		Reader:       &InterruptsStatReader{counts: counts},
+		Reader:       &interruptsStatReader{counts: counts},
 	}
 }
 
-func (reader *InterruptsStatReader) Read() []uint64 {
+func (reader *interruptsStatReader) Read() []uint64 {
 	interrupts, err := procfs.ReadInterrupts(procInterruptsPath)
 	if err != nil {
 		panic(err)
@@ -38,7 +39,7 @@ func (reader *InterruptsStatReader) Read() []uint64 {
 }
 
 func parseInterruptNames(interrupts *procfs.Interrupts) []string {
-	names := make([]string, 0)
+	var names []string
 	for _, interrupt := range interrupts.Interrupts {
 		for cpu := range interrupt.Counts {
 			name := fmt.Sprintf("int%s.cpu%d", interrupt.Name, cpu)
@@ -49,7 +50,7 @@ func parseInterruptNames(interrupts *procfs.Interrupts) []string {
 }
 
 func parseInterruptDescriptions(interrupts *procfs.Interrupts) []string {
-	descriptions := make([]string, 0)
+	var descriptions []string
 	for _, interrupt := range interrupts.Interrupts {
 		description := fmt.Sprintf("intr.%s = %s", interrupt.Name, interrupt.Description)
 		descriptions = append(descriptions, description)
@@ -58,7 +59,7 @@ func parseInterruptDescriptions(interrupts *procfs.Interrupts) []string {
 }
 
 func parseInterruptCounts(interrupts *procfs.Interrupts) []uint64 {
-	values := make([]uint64, 0)
+	var values []uint64
 	for _, interrupt := range interrupts.Interrupts {
 		for _, count := range interrupt.Counts {
 			values = append(values, count)

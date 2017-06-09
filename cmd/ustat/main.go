@@ -42,9 +42,9 @@ func main() {
 		},
 	}
 	app.Action = func(ctx *cli.Context) error {
-		stats := make([]*ustat.Stat, 0)
+		var stats []*ustat.Stat
 		if ctx.Bool("cpu") {
-			stats = append(stats, ustat.NewCpusStat())
+			stats = append(stats, ustat.NewCPUsStat())
 		}
 		if ctx.Bool("int") {
 			stats = append(stats, ustat.NewInterruptsStat())

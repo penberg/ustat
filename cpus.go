@@ -5,34 +5,35 @@ import (
 	procfs "github.com/c9s/goprocinfo/linux"
 )
 
-type CpusStatReader struct {
+type cpusStatReader struct {
 	values []uint64
 }
 
 const procStatPath = "/proc/stat"
 
-func NewCpusStat() *Stat {
+// NewCPUsStat returns a new Stat, which collects CPU stats from /proc/stat.
+func NewCPUsStat() *Stat {
 	stat, err := procfs.ReadStat(procStatPath)
 	if err != nil {
 		panic(err)
 	}
-	names := parseCpuStatNames(stat)
-	descriptions := parseCpuStatDescriptions(stat)
-	values := parseCpuStats(stat)
+	names := parseCPUStatNames(stat)
+	descriptions := parseCPUStatDescriptions(stat)
+	values := parseCPUStats(stat)
 	return &Stat{
 		Names:        names,
 		Descriptions: descriptions,
-		Reader:       &CpusStatReader{values: values},
+		Reader:       &cpusStatReader{values: values},
 	}
 	return nil
 }
 
-func (reader *CpusStatReader) Read() []uint64 {
+func (reader *cpusStatReader) Read() []uint64 {
 	stat, err := procfs.ReadStat(procStatPath)
 	if err != nil {
 		panic(err)
 	}
-	values := parseCpuStats(stat)
+	values := parseCPUStats(stat)
 	diff := Difference(reader.values, values)
 	reader.values = values
 	return diff
@@ -64,8 +65,8 @@ var cpuStatDescriptions = map[string]string{
 	"guestnice": "GuestNice",
 }
 
-func parseCpuStatNames(stat *procfs.Stat) []string {
-	names := make([]string, 0)
+func parseCPUStatNames(stat *procfs.Stat) []string {
+	var names []string
 	for _, cpuStat := range stat.CPUStats {
 		for _, cpuStatType := range cpuStatTypes {
 			name := fmt.Sprintf("%s.%s", cpuStat.Id, cpuStatType)
@@ -76,8 +77,8 @@ func parseCpuStatNames(stat *procfs.Stat) []string {
 	return names
 }
 
-func parseCpuStatDescriptions(stat *procfs.Stat) []string {
-	descriptions := make([]string, 0)
+func parseCPUStatDescriptions(stat *procfs.Stat) []string {
+	var descriptions []string
 	for _, cpuStat := range stat.CPUStats {
 		for _, cpuStatType := range cpuStatTypes {
 			cpuStatDescription := cpuStatDescriptions[cpuStatType]
@@ -89,8 +90,8 @@ func parseCpuStatDescriptions(stat *procfs.Stat) []string {
 	return descriptions
 }
 
-func parseCpuStats(stat *procfs.Stat) []uint64 {
-	values := make([]uint64, 0)
+func parseCPUStats(stat *procfs.Stat) []uint64 {
+	var values []uint64
 	for _, cpuStat := range stat.CPUStats {
 		values = append(values, cpuStat.User)
 		values = append(values, cpuStat.Nice)

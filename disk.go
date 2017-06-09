@@ -5,12 +5,13 @@ import (
 	procfs "github.com/c9s/goprocinfo/linux"
 )
 
-type DiskStatReader struct {
+type diskStatReader struct {
 	values []uint64
 }
 
 const procDiskStatPath = "/proc/diskstats"
 
+// NewDiskStat returns a new Stat, which collects disk stats from /proc/diskstats.
 func NewDiskStat() *Stat {
 	stats, err := procfs.ReadDiskStats(procDiskStatPath)
 	if err != nil {
@@ -22,11 +23,11 @@ func NewDiskStat() *Stat {
 	return &Stat{
 		Names:        names,
 		Descriptions: descriptions,
-		Reader:       &DiskStatReader{values: values},
+		Reader:       &diskStatReader{values: values},
 	}
 }
 
-func (reader *DiskStatReader) Read() []uint64 {
+func (reader *diskStatReader) Read() []uint64 {
 	stats, err := procfs.ReadDiskStats(procDiskStatPath)
 	if err != nil {
 		panic(err)
@@ -48,7 +49,7 @@ var diskStatDescriptions = map[string]string{
 }
 
 func parseDiskStatNames(stats []procfs.DiskStat) []string {
-	names := make([]string, 0)
+	var names []string
 	for _, stat := range stats {
 		for _, diskStatType := range diskStatTypes {
 			name := fmt.Sprintf("disk.%s.%s", stat.Name, diskStatType)
@@ -59,7 +60,7 @@ func parseDiskStatNames(stats []procfs.DiskStat) []string {
 }
 
 func parseDiskStatDescriptions(stats []procfs.DiskStat) []string {
-	descriptions := make([]string, 0)
+	var descriptions []string
 	for _, stat := range stats {
 		for _, diskStatType := range diskStatTypes {
 			diskStatDescription := diskStatDescriptions[diskStatType]
@@ -71,7 +72,7 @@ func parseDiskStatDescriptions(stats []procfs.DiskStat) []string {
 }
 
 func parseDiskStats(stats []procfs.DiskStat) []uint64 {
-	values := make([]uint64, 0)
+	var values []uint64
 	for _, stat := range stats {
 		values = append(values, stat.ReadSectors)
 		values = append(values, stat.WriteSectors)

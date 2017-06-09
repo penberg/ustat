@@ -5,12 +5,13 @@ import (
 	procfs "github.com/c9s/goprocinfo/linux"
 )
 
-type NetStatReader struct {
+type netStatReader struct {
 	values []uint64
 }
 
 const procNetDevPath = "/proc/net/dev"
 
+// NewNetStat returns a new Stat, which collects networking stats from /proc/net/dev.
 func NewNetStat() *Stat {
 	stats, err := procfs.ReadNetworkStat(procNetDevPath)
 	if err != nil {
@@ -22,11 +23,11 @@ func NewNetStat() *Stat {
 	return &Stat{
 		Names:        names,
 		Descriptions: descriptions,
-		Reader:       &NetStatReader{values: values},
+		Reader:       &netStatReader{values: values},
 	}
 }
 
-func (reader *NetStatReader) Read() []uint64 {
+func (reader *netStatReader) Read() []uint64 {
 	stats, err := procfs.ReadNetworkStat(procNetDevPath)
 	if err != nil {
 		panic(err)
@@ -60,7 +61,7 @@ var netStatDescriptions = map[string]string{
 }
 
 func parseNetStatNames(stats []procfs.NetworkStat) []string {
-	names := make([]string, 0)
+	var names []string
 	for _, stat := range stats {
 		for _, netStatType := range netStatTypes {
 			name := fmt.Sprintf("net.%s.%s", stat.Iface, netStatType)
@@ -71,7 +72,7 @@ func parseNetStatNames(stats []procfs.NetworkStat) []string {
 }
 
 func parseNetStatDescriptions(stats []procfs.NetworkStat) []string {
-	descriptions := make([]string, 0)
+	var descriptions []string
 	for _, stat := range stats {
 		for _, netStatType := range netStatTypes {
 			netStatDescription := netStatDescriptions[netStatType]
@@ -83,7 +84,7 @@ func parseNetStatDescriptions(stats []procfs.NetworkStat) []string {
 }
 
 func parseNetStats(stats []procfs.NetworkStat) []uint64 {
-	values := make([]uint64, 0)
+	var values []uint64
 	for _, stat := range stats {
 		values = append(values, stat.RxBytes)
 		values = append(values, stat.RxPackets)
