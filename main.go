@@ -58,18 +58,22 @@ func main() {
 		fmt.Printf("# Column descriptions:\n")
 		for _, stat := range stats {
 			for _, description := range stat.Descriptions {
-				matched, err := regexp.MatchString(pattern, description)
-				if err != nil || !matched {
-					continue
+				if pattern != "" {
+					matched, err := regexp.MatchString(pattern, description)
+					if err != nil || !matched {
+						continue
+					}
 				}
 				fmt.Printf("# %s\n", description)
 			}
 		}
 		for _, stat := range stats {
 			for _, name := range stat.Names {
-				matched, err := regexp.MatchString(pattern, name)
-				if err != nil || !matched {
-					continue
+				if pattern != "" {
+					matched, err := regexp.MatchString(pattern, name)
+					if err != nil || !matched {
+						continue
+					}
 				}
 				fmt.Printf("%s\t", name)
 			}
@@ -79,9 +83,11 @@ func main() {
 			for _, stat := range stats {
 				values := stat.Reader.Read()
 				for idx, value := range values {
-					matched, err := regexp.MatchString(pattern, stat.Names[idx])
-					if err != nil || !matched {
-						continue
+					if pattern != "" {
+						matched, err := regexp.MatchString(pattern, stat.Names[idx])
+						if err != nil || !matched {
+							continue
+						}
 					}
 					fmt.Printf("%d\t", value)
 				}
