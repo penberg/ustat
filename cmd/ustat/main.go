@@ -5,7 +5,9 @@ import (
 	"github.com/penberg/ustat"
 	"gopkg.in/urfave/cli.v1"
 	"os"
+	"os/signal"
 	"regexp"
+	"syscall"
 	"time"
 )
 
@@ -93,22 +95,35 @@ func main() {
 			}
 		}
 		fmt.Fprintln(output, "")
-		for {
-			for _, stat := range stats {
-				values := stat.Reader.Read()
-				for idx, value := range values {
-					if pattern != "" {
-						matched, err := regexp.MatchString(pattern, stat.Names[idx])
-						if err != nil || !matched {
-							continue
+		sigs := make(chan os.Signal, 1)
+		done := make(chan bool, 1)
+		signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+		go func() {
+			sig := <-sigs
+			fmt.Println()
+			fmt.Println(sig)
+			done <- true
+		}()
+		ticker := time.NewTicker(time.Second * 1)
+		go func() {
+			for _ = range ticker.C {
+				for _, stat := range stats {
+					values := stat.Reader.Read()
+					for idx, value := range values {
+						if pattern != "" {
+							matched, err := regexp.MatchString(pattern, stat.Names[idx])
+							if err != nil || !matched {
+								continue
+							}
 						}
+						fmt.Fprintf(output, "%d\t", value)
 					}
-					fmt.Fprintf(output, "%d\t", value)
 				}
+				fmt.Fprintln(output, "")
 			}
-			fmt.Fprintln(output, "")
-			time.Sleep(1 * time.Second)
-		}
+		}()
+		<-done
+
 		return nil
 	}
 	app.Run(os.Args)
