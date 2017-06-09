@@ -1,5 +1,7 @@
 # ustat
 
+[![Build Status](https://travis-ci.org/penberg/ustat.png?branch=master)](http://travis-ci.org/penberg/ustat)
+
 `ustat` is an unified system stats collector for Linux, which combines capabilities of tools like `vmstat`, `mpstat`, `iostat`, and `ifstat`.
 The tool is designed for low collection overhead to make it suitable for stats collection when evaluating system performance under load.
 The main objective of `ustat` is to collect detailed stats rather than aggregate stats so that it is possible to drill down to details during analysis.
