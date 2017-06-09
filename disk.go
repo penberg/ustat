@@ -5,7 +5,7 @@ import (
 	procfs "github.com/c9s/goprocinfo/linux"
 )
 
-type diskStatReader struct {
+type diskStatCollector struct {
 	values []uint64
 }
 
@@ -23,11 +23,11 @@ func NewDiskStat() *Stat {
 	return &Stat{
 		Names:        names,
 		Descriptions: descriptions,
-		Reader:       &diskStatReader{values: values},
+		Collector:    &diskStatCollector{values: values},
 	}
 }
 
-func (reader *diskStatReader) Read() []uint64 {
+func (reader *diskStatCollector) Collect() []uint64 {
 	stats, err := procfs.ReadDiskStats(procDiskStatPath)
 	if err != nil {
 		panic(err)

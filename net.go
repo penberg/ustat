@@ -5,7 +5,7 @@ import (
 	procfs "github.com/c9s/goprocinfo/linux"
 )
 
-type netStatReader struct {
+type procNetDevCollector struct {
 	values []uint64
 }
 
@@ -23,11 +23,11 @@ func NewNetStat() *Stat {
 	return &Stat{
 		Names:        names,
 		Descriptions: descriptions,
-		Reader:       &netStatReader{values: values},
+		Collector:    &procNetDevCollector{values: values},
 	}
 }
 
-func (reader *netStatReader) Read() []uint64 {
+func (reader *procNetDevCollector) Collect() []uint64 {
 	stats, err := procfs.ReadNetworkStat(procNetDevPath)
 	if err != nil {
 		panic(err)

@@ -5,7 +5,7 @@ import (
 	procfs "github.com/c9s/goprocinfo/linux"
 )
 
-type interruptsStatReader struct {
+type procInterruptsCollector struct {
 	counts []uint64
 }
 
@@ -23,11 +23,11 @@ func NewInterruptsStat() *Stat {
 	return &Stat{
 		Names:        names,
 		Descriptions: descriptions,
-		Reader:       &interruptsStatReader{counts: counts},
+		Collector:    &procInterruptsCollector{counts: counts},
 	}
 }
 
-func (reader *interruptsStatReader) Read() []uint64 {
+func (reader *procInterruptsCollector) Collect() []uint64 {
 	interrupts, err := procfs.ReadInterrupts(procInterruptsPath)
 	if err != nil {
 		panic(err)

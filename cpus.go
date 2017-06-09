@@ -5,7 +5,7 @@ import (
 	procfs "github.com/c9s/goprocinfo/linux"
 )
 
-type cpusStatReader struct {
+type procStatCollector struct {
 	values []uint64
 }
 
@@ -23,12 +23,12 @@ func NewCPUsStat() *Stat {
 	return &Stat{
 		Names:        names,
 		Descriptions: descriptions,
-		Reader:       &cpusStatReader{values: values},
+		Collector:    &procStatCollector{values: values},
 	}
 	return nil
 }
 
-func (reader *cpusStatReader) Read() []uint64 {
+func (reader *procStatCollector) Collect() []uint64 {
 	stat, err := procfs.ReadStat(procStatPath)
 	if err != nil {
 		panic(err)

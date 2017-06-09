@@ -4,12 +4,12 @@ package ustat
 type Stat struct {
 	Names        []string
 	Descriptions []string
-	Reader       StatReader
+	Collector    StatCollector
 }
 
-// A StatReader is an interface for reading a collection of stats.
-type StatReader interface {
-	Read() []uint64
+// A StatCollector is an interface for collecting stats.
+type StatCollector interface {
+	Collect() []uint64
 }
 
 // Difference calculates the change in values for two arrays.

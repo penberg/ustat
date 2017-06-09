@@ -108,7 +108,7 @@ func main() {
 		go func() {
 			for _ = range ticker.C {
 				for _, stat := range stats {
-					values := stat.Reader.Read()
+					values := stat.Collector.Collect()
 					for idx, value := range values {
 						if pattern != "" {
 							matched, err := regexp.MatchString(pattern, stat.Names[idx])
