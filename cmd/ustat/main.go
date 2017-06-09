@@ -18,6 +18,12 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "ustat"
 	app.Usage = "Unified system statistics collector"
+	app.Authors = []cli.Author{
+		cli.Author{
+			Name:  "Pekka Enberg",
+			Email: "penberg@iki.fi",
+		},
+	}
 	app.HideHelp = true
 	app.ArgsUsage = "[delay]"
 	app.Flags = []cli.Flag{
