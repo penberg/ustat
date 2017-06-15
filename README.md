@@ -15,10 +15,10 @@ go get -u github.com/penberg/ustat/cmd/ustat
 
 ## Usage
 
-To run `ustat`:
+To collect stats, run:
 
 ```sh
-ustat 1
+ustat record 1
 ```
 
 In the above example, `ustat` collects all stats it supports and samples them every one second.

@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 - Collect aggregate CPU stats.
 
+### Changed
+- Move stats collection under `ustat record` command.
+
 ### Fixed
 - Fix CPU utilization percentage calculation.
 
