@@ -67,6 +67,10 @@ var cpuStatDescriptions = map[string]string{
 
 func parseCPUStatNames(stat *procfs.Stat) []string {
 	var names []string
+	for _, cpuStatType := range cpuStatTypes {
+		name := fmt.Sprintf("%s.%s", "cpu", cpuStatType)
+		names = append(names, name)
+	}
 	for _, cpuStat := range stat.CPUStats {
 		for _, cpuStatType := range cpuStatTypes {
 			name := fmt.Sprintf("%s.%s", cpuStat.Id, cpuStatType)
@@ -92,6 +96,16 @@ func parseCPUStatDescriptions(stat *procfs.Stat) []string {
 
 func parseCPUStats(stat *procfs.Stat) []uint64 {
 	var values []uint64
+	values = append(values, stat.CPUStatAll.User)
+	values = append(values, stat.CPUStatAll.Nice)
+	values = append(values, stat.CPUStatAll.System)
+	values = append(values, stat.CPUStatAll.Idle)
+	values = append(values, stat.CPUStatAll.IOWait)
+	values = append(values, stat.CPUStatAll.IRQ)
+	values = append(values, stat.CPUStatAll.SoftIRQ)
+	values = append(values, stat.CPUStatAll.Steal)
+	values = append(values, stat.CPUStatAll.Guest)
+	values = append(values, stat.CPUStatAll.GuestNice)
 	for _, cpuStat := range stat.CPUStats {
 		values = append(values, cpuStat.User)
 		values = append(values, cpuStat.Nice)
