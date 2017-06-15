@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 - Collect aggregate CPU stats.
 
+### Fixed
+- Fix CPU utilization percentage calculation.
+
 ## 0.1.0 - 2017-06-08
 ### Added
 - A `ustat` command line tool written in Go, similar to `dstat`, for example.

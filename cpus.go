@@ -6,7 +6,7 @@ import (
 )
 
 type procStatCollector struct {
-	values []uint64
+	prev *procfs.Stat
 }
 
 const procStatPath = "/proc/stat"
@@ -19,13 +19,26 @@ func NewCPUsStat() *Stat {
 	}
 	names := parseCPUStatNames(stat)
 	descriptions := parseCPUStatDescriptions(stat)
-	values := parseCPUStats(stat)
 	return &Stat{
 		Names:        names,
 		Descriptions: descriptions,
-		Collector:    &procStatCollector{values: values},
+		Collector: &procStatCollector{
+			prev: stat,
+		},
 	}
 	return nil
+}
+
+func interval(before []uint64, after []uint64) uint64 {
+	var prev uint64 = 0
+	for _, value := range before {
+		prev += value
+	}
+	var curr uint64 = 0
+	for _, value := range after {
+		curr += value
+	}
+	return curr - prev
 }
 
 func (reader *procStatCollector) Collect() []uint64 {
@@ -33,10 +46,9 @@ func (reader *procStatCollector) Collect() []uint64 {
 	if err != nil {
 		panic(err)
 	}
-	values := parseCPUStats(stat)
-	diff := Difference(reader.values, values)
-	reader.values = values
-	return diff
+	values := parseCPUStats(stat, reader.prev)
+	reader.prev = stat
+	return values
 }
 
 var cpuStatTypes = []string{
@@ -94,30 +106,41 @@ func parseCPUStatDescriptions(stat *procfs.Stat) []string {
 	return descriptions
 }
 
-func parseCPUStats(stat *procfs.Stat) []uint64 {
+func parseCPUStats(curr *procfs.Stat, prev *procfs.Stat) []uint64 {
 	var values []uint64
-	values = append(values, stat.CPUStatAll.User)
-	values = append(values, stat.CPUStatAll.Nice)
-	values = append(values, stat.CPUStatAll.System)
-	values = append(values, stat.CPUStatAll.Idle)
-	values = append(values, stat.CPUStatAll.IOWait)
-	values = append(values, stat.CPUStatAll.IRQ)
-	values = append(values, stat.CPUStatAll.SoftIRQ)
-	values = append(values, stat.CPUStatAll.Steal)
-	values = append(values, stat.CPUStatAll.Guest)
-	values = append(values, stat.CPUStatAll.GuestNice)
-	for _, cpuStat := range stat.CPUStats {
-		values = append(values, cpuStat.User)
-		values = append(values, cpuStat.Nice)
-		values = append(values, cpuStat.System)
-		values = append(values, cpuStat.Idle)
-		values = append(values, cpuStat.IOWait)
-		values = append(values, cpuStat.IRQ)
-		values = append(values, cpuStat.SoftIRQ)
-		values = append(values, cpuStat.Steal)
-		values = append(values, cpuStat.Guest)
-		values = append(values, cpuStat.GuestNice)
+	interval := runtime(curr.CPUStatAll) - runtime(prev.CPUStatAll)
+	values = append(values, difference(curr.CPUStatAll.User, prev.CPUStatAll.User, interval))
+	values = append(values, difference(curr.CPUStatAll.Nice, prev.CPUStatAll.Nice, interval))
+	values = append(values, difference(curr.CPUStatAll.System, prev.CPUStatAll.System, interval))
+	values = append(values, difference(curr.CPUStatAll.Idle, prev.CPUStatAll.Idle, interval))
+	values = append(values, difference(curr.CPUStatAll.IOWait, prev.CPUStatAll.IOWait, interval))
+	values = append(values, difference(curr.CPUStatAll.IRQ, prev.CPUStatAll.IRQ, interval))
+	values = append(values, difference(curr.CPUStatAll.SoftIRQ, prev.CPUStatAll.SoftIRQ, interval))
+	values = append(values, difference(curr.CPUStatAll.Steal, prev.CPUStatAll.Steal, interval))
+	values = append(values, difference(curr.CPUStatAll.Guest, prev.CPUStatAll.Guest, interval))
+	values = append(values, difference(curr.CPUStatAll.GuestNice, prev.CPUStatAll.GuestNice, interval))
+	for idx, currCpuStat := range curr.CPUStats {
+		prevCpuStat := prev.CPUStats[idx]
+		interval := runtime(currCpuStat) - runtime(prevCpuStat)
+		values = append(values, difference(currCpuStat.User, prevCpuStat.User, interval))
+		values = append(values, difference(currCpuStat.Nice, prevCpuStat.Nice, interval))
+		values = append(values, difference(currCpuStat.System, prevCpuStat.System, interval))
+		values = append(values, difference(currCpuStat.Idle, prevCpuStat.Idle, interval))
+		values = append(values, difference(currCpuStat.IOWait, prevCpuStat.IOWait, interval))
+		values = append(values, difference(currCpuStat.IRQ, prevCpuStat.IRQ, interval))
+		values = append(values, difference(currCpuStat.SoftIRQ, prevCpuStat.SoftIRQ, interval))
+		values = append(values, difference(currCpuStat.Steal, prevCpuStat.Steal, interval))
+		values = append(values, difference(currCpuStat.Guest, prevCpuStat.Guest, interval))
+		values = append(values, difference(currCpuStat.GuestNice, prevCpuStat.GuestNice, interval))
 	}
-	values = append(values, stat.ContextSwitches)
+	values = append(values, curr.ContextSwitches-prev.ContextSwitches)
 	return values
+}
+
+func runtime(cpuStat procfs.CPUStat) uint64 {
+	return cpuStat.User + cpuStat.Nice + cpuStat.System + cpuStat.Idle + cpuStat.IOWait + cpuStat.IRQ + cpuStat.SoftIRQ
+}
+
+func difference(curr uint64, prev uint64, interval uint64) uint64 {
+	return uint64(float64(curr-prev) / float64(interval) * 100)
 }
