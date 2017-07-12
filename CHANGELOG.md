@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## [Unreleased]
 ### Added
 - Collect aggregate CPU stats.
+- Collect SoftIRQ stats.
 - Add `ustat report` command for summarizing results.
 
 ### Changed
