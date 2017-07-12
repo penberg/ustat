@@ -53,6 +53,7 @@ func reportAction(ctx *cli.Context) error {
 	header := map[string]int{}
 	cpuStats := map[string]cpuStat{}
 	interruptStats := map[string]interruptStat{}
+	softIrqStats := map[string]interruptStat{}
 	sampleCount := 0
 	for {
 		record, err := reader.Read()
@@ -106,6 +107,23 @@ func reportAction(ctx *cli.Context) error {
 				stat.values[class] = values
 				interruptStats[resource] = stat
 			}
+			if strings.HasPrefix(resource, "softirq") {
+				resource := result[1]
+				rawValue := record[idx]
+				value, err := strconv.Atoi(rawValue)
+				if err != nil {
+					return cli.NewExitError(fmt.Sprintf("Unable to parse value '%s': %v", rawValue, err), 2)
+				}
+				class := result[2]
+				stat, ok := softIrqStats[resource]
+				if !ok {
+					stat = interruptStat{values: map[string][]float64{}}
+				}
+				values := stat.values[class]
+				values = append(values, float64(value))
+				stat.values[class] = values
+				softIrqStats[resource] = stat
+			}
 		}
 		sampleCount++
 	}
@@ -146,6 +164,10 @@ func reportAction(ctx *cli.Context) error {
 	}
 	fmt.Printf("\n")
 	if err := printInterrupts("Interrupts", interruptStats, cpus); err != nil {
+		return err
+	}
+	fmt.Printf("\n")
+	if err := printInterrupts("SoftIRQs", softIrqStats, cpus); err != nil {
 		return err
 	}
 	fmt.Printf("\n")
