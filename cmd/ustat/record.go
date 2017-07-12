@@ -28,6 +28,10 @@ var recordCommand = cli.Command{
 			Usage: "enable interrupt stats collection",
 		},
 		cli.BoolFlag{
+			Name:  "s,softirq",
+			Usage: "enable softirq stats collection",
+		},
+		cli.BoolFlag{
 			Name:  "n,net",
 			Usage: "enable network stats collection",
 		},
@@ -60,6 +64,9 @@ func recordAction(ctx *cli.Context) error {
 	if ctx.Bool("int") {
 		stats = append(stats, ustat.NewInterruptsStat())
 	}
+	if ctx.Bool("softirq") {
+		stats = append(stats, ustat.NewSoftIRQsStat())
+	}
 	if ctx.Bool("net") {
 		stats = append(stats, ustat.NewNetStat())
 	}
@@ -81,6 +88,7 @@ func recordAction(ctx *cli.Context) error {
 		stats = []*ustat.Stat{
 			ustat.NewCPUsStat(),
 			ustat.NewInterruptsStat(),
+			ustat.NewSoftIRQsStat(),
 			ustat.NewNetStat(),
 			ustat.NewDiskStat(),
 		}
