@@ -144,13 +144,21 @@ func reportAction(ctx *cli.Context) error {
 		}
 		fmt.Printf("\n")
 	}
+	fmt.Printf("\n")
+	if err := printInterrupts("Interrupts", interruptStats, cpus); err != nil {
+		return err
+	}
+	fmt.Printf("\n")
+	return nil
+}
+
+func printInterrupts(title string, interruptStats map[string]interruptStat, cpus []string) error {
 	interrupts := []string{}
 	for interrupt, _ := range interruptStats {
 		interrupts = append(interrupts, interrupt)
 	}
 	sort.Strings(interrupts)
-	fmt.Printf("\n")
-	fmt.Printf("Interrupts, mean (SD):\n")
+	fmt.Printf("%s, mean (SD):\n", title)
 	fmt.Printf("\n")
 	fmt.Printf("  %-10s", "interrupt")
 	for _, cpu := range cpus {
@@ -185,6 +193,5 @@ func reportAction(ctx *cli.Context) error {
 		}
 		fmt.Printf("\n")
 	}
-	fmt.Printf("\n")
 	return nil
 }
