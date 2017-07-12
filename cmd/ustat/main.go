@@ -21,6 +21,7 @@ func main() {
 	app.HideHelp = true
 	app.Commands = []cli.Command{
 		recordCommand,
+		reportCommand,
 	}
 	app.Run(os.Args)
 }

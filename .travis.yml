@@ -10,5 +10,6 @@ go:
 before_script:
 - go get gopkg.in/urfave/cli.v1
 - go get github.com/c9s/goprocinfo/linux
+- go get github.com/montanaflynn/stats
 script:
 - go test -v ./...
