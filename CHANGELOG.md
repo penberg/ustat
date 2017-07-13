@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+
+## [0.2.0] - 2017-07-13
 ### Added
 - Collect aggregate CPU stats.
 - Collect SoftIRQ stats.
@@ -24,4 +26,5 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Network stats per interface, which are collected from `/proc/net/dev`.
 - Disk stats per block device, which are collected from `/proc/diskstats`.
 
-[Unreleased]: https://github.com/penberg/ustat/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/penberg/ustat/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/penberg/ustat/compare/v0.1.0...v0.2.0
