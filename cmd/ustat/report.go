@@ -151,11 +151,11 @@ func reportAction(ctx *cli.Context) error {
 			values := cpuStats.values[class]
 			mean, err := stats.Mean(values)
 			if err != nil {
-				return cli.NewExitError(fmt.Sprintf("Error '%s': %v", err), 2)
+				return cli.NewExitError(fmt.Sprintf("%v", err), 2)
 			}
 			stddev, err := stats.StandardDeviation(values)
 			if err != nil {
-				return cli.NewExitError(fmt.Sprintf("Error '%s': %v", err), 2)
+				return cli.NewExitError(fmt.Sprintf("%v", err), 2)
 			}
 			format := fmt.Sprintf("%.2f (%.2f)", mean, stddev)
 			fmt.Printf(" %-12s", format)
@@ -204,11 +204,11 @@ func printInterrupts(title string, interruptStats map[string]interruptStat, cpus
 			}
 			mean, err := stats.Mean(values)
 			if err != nil {
-				return cli.NewExitError(fmt.Sprintf("Error '%s': %v", err), 2)
+				return cli.NewExitError(fmt.Sprintf("%v", err), 2)
 			}
 			stddev, err := stats.StandardDeviation(values)
 			if err != nil {
-				return cli.NewExitError(fmt.Sprintf("Error '%s': %v", err), 2)
+				return cli.NewExitError(fmt.Sprintf("%v", err), 2)
 			}
 			format := fmt.Sprintf("%.2f (%.2f)", mean, stddev)
 			fmt.Printf("%20s", format)
