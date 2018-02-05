@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"gopkg.in/urfave/cli.v1"
 	"os"
 )
@@ -23,5 +24,8 @@ func main() {
 		recordCommand,
 		reportCommand,
 	}
-	app.Run(os.Args)
+	if err := app.Run(os.Args); err != nil {
+		fmt.Fprintf(os.Stderr, "error: %v\n", err)
+		os.Exit(1)
+	}
 }
